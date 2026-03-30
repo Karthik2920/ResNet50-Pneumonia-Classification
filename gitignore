@@ -1,0 +1,31 @@
+# Kaggle credentials — NEVER commit this
+kaggle.json
+.kaggle/
+
+# Dataset files (too large, download via Kaggle API)
+*.zip
+chest_xray/
+chest-xray-pneumonia.zip
+
+# Model checkpoints
+*.pth
+*.pt
+*.ckpt
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Colab output files
+*.log

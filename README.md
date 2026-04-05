@@ -16,6 +16,8 @@
 
 This project investigates how **layer-wise fine-tuning depth** in a pretrained ResNet50 architecture affects pneumonia classification performance on an imbalanced chest X-ray dataset. Rather than treating transfer learning as a fixed implementation detail, fine-tuning depth is treated as a controllable architectural variable — systematically evaluated across three ResNet50 configurations.
 
+For a **visual walkthrough** (metrics, ROC, calibration, Grad-CAM, LIME), see the [Figure gallery](#figure-gallery) below.
+
 ---
 
 ## Key Results
@@ -37,6 +39,76 @@ Test-set metrics below match the comparison table in [`Phase_4_XAI_MD_RFS.ipynb`
 - Specificity (normal recall): **0.7735**
 - PPV: **0.8790** | NPV: **0.9731**
 - Missed pneumonia: **5** of 390 positive test cases (~**1.28%** of pneumonia cases)
+
+---
+
+## Figure gallery
+
+PNG exports from executed cells in [`Phase_4_XAI_MD_RFS.ipynb`](Phase_4_XAI_MD_RFS.ipynb) (the same run as the metrics above).
+
+### Model comparison and missed cases
+
+<p align="center">
+  <img src="docs/assets/model_metrics_bar_comparison.png" alt="Bar chart of test accuracy, precision, recall, and F1 for four models" width="780">
+</p>
+
+<p align="center"><em>Test-set accuracy, precision, recall, and F1 (PNEUMONIA class) for CNN baseline, frozen, partial, and full fine-tuned ResNet50.</em></p>
+
+<p align="center">
+  <img src="docs/assets/false_negatives_by_model.png" alt="False negatives by model" width="780">
+</p>
+
+<p align="center"><em>False negatives (missed pneumonia) across architectures — the quantity minimized by the full fine-tuned model at threshold 0.9.</em></p>
+
+### Full fine-tuned ResNet50 (threshold = 0.9)
+
+<p align="center">
+  <img src="docs/assets/full_ft_confusion_matrix_roc.png" alt="Confusion matrix and ROC curve for full fine-tuned model" width="780">
+</p>
+
+<p align="center"><em>Confusion matrix and ROC curve (AUC ≈ 0.96).</em></p>
+
+<p align="center">
+  <img src="docs/assets/clinical_metrics_fairness_panel.png" alt="Confusion matrix and clinical metric bars" width="780">
+</p>
+
+<p align="center"><em>Confusion matrix with per-class clinical metrics (sensitivity, specificity, PPV, NPV, balanced accuracy) vs a 0.80 reference line.</em></p>
+
+### Global behavior, threshold sweep, and calibration
+
+<p align="center">
+  <img src="docs/assets/global_probability_distribution_roc.png" alt="Histograms of predicted probability by true class and ROC" width="780">
+</p>
+
+<p align="center"><em>Predicted pneumonia probability by true label and ROC for the full fine-tuned model.</em></p>
+
+<p align="center">
+  <img src="docs/assets/threshold_sensitivity_curves.png" alt="Precision recall F1 versus threshold" width="780">
+</p>
+
+<p align="center"><em>How precision, recall, F1, and accuracy move with the decision threshold (motivation for t = 0.9).</em></p>
+
+<p align="center">
+  <img src="docs/assets/calibration_reliability_ece.png" alt="Reliability diagram and calibration gap" width="780">
+</p>
+
+<p align="center"><em>Reliability diagram and confidence histograms; Expected Calibration Error (ECE) ≈ 0.34.</em></p>
+
+### Explainability (Grad-CAM and LIME)
+
+<p align="center">
+  <img src="docs/assets/grad_cam_layer4_example.png" alt="Grad-CAM heatmap overlaid on chest X-ray" width="780">
+</p>
+
+<p align="center"><em>Grad-CAM on layer 4 highlights regions most influential for the prediction.</em></p>
+
+<p align="center">
+  <img src="docs/assets/lime_superpixel_explanation.png" alt="LIME superpixel explanation" width="780">
+</p>
+
+<p align="center"><em>LIME superpixels (green) that support the PNEUMONIA decision.</em></p>
+
+**Gradio:** The notebook builds a web UI (image upload, probabilities, risk band, Grad-CAM). Run the Gradio cell in Colab and use `share=True` for a temporary public link; see [**`Phase4_XAI_MD_Final_RFS_Group5.docx`**](Phase4_XAI_MD_Final_RFS_Group5.docx) for write-up and screenshots.
 
 ---
 
@@ -116,6 +188,7 @@ Google Colab        CUDA (T4 GPU)       Kaggle API
 ```
 ├── Phase_4_XAI_MD_RFS.ipynb              # Complete project notebook (Phases 1–4) — primary; Gradio UI here
 ├── Phase_4_XAI_Deployment_RFS.ipynb      # Alternate Colab export (full pipeline; fewer cells)
+├── docs/assets/                          # README figures (exported from executed notebook cells)
 ├── Phase4_XAI_MD_Final_RFS_Group5.docx   # Phase 4 final report (XAI, fairness, Gradio) — Group 5
 ├── Phase4_v4.docx                        # Earlier Phase 4 draft (optional)
 ├── README.md

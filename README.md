@@ -20,18 +20,23 @@ This project investigates how **layer-wise fine-tuning depth** in a pretrained R
 
 ## Key Results
 
-| Configuration | Accuracy | Precision | Recall | F1 | False Negatives |
-|---|---|---|---|---|---|
-| Baseline CNN | 0.85 | 0.83 | 0.96 | 0.89 | 17 |
-| ResNet50 Frozen (4K params) | 0.86 | 0.95 | 0.82 | 0.88 | 71 |
-| ResNet50 Partial FT (14.9M params) | 0.89 | 0.86 | 0.98 | 0.92 | 9 |
-| **ResNet50 Full FT (23.5M params)** | **0.88** | **0.85** | **0.98** | **0.91** | **7** |
+Test-set metrics below match the comparison table in [`Phase_4_XAI_MD_RFS.ipynb`](Phase_4_XAI_MD_RFS.ipynb). Precision, recall, and F1 are reported for the **PNEUMONIA** (positive) class.
 
-**Best Model: Full Fine-Tuned ResNet50**
-- ROC-AUC: **0.9532**
-- Decision Threshold: **0.9** (recall-optimized for clinical screening)
-- Sensitivity: **0.9821** | Specificity: 0.7009
-- False Negative Rate: **1.79%** (7 missed pneumonia cases in 624)
+| Configuration | Accuracy | Precision (P) | Recall (P) | F1 (P) | False Negatives |
+|---|---|---|---|---|---|
+| CNN (Baseline, ~6.4M params) | 0.83 | 0.81 | 0.96 | 0.88 | 15 |
+| ResNet50 Frozen (~4K params) | 0.86 | 0.94 | 0.83 | 0.88 | 66 |
+| **ResNet50 Partial FT (~14.9M params)** | **0.92** | **0.90** | **0.97** | **0.94** | 10 |
+| ResNet50 Full FT (~23.5M params) | 0.91 | 0.88 | 0.99 | 0.93 | **5** |
+
+**Takeaway:** Partial fine-tuning reaches the **highest accuracy** (0.92) and **strongest F1** (0.94) on this split. Full fine-tuning at decision threshold **0.9** minimizes **missed pneumonia** (5 false negatives) and is used for the Phase 4 screening-style analysis and deployment demo.
+
+**Full Fine-Tuned ResNet50 (threshold = 0.9, test set)**
+- ROC-AUC: **0.9634**
+- Sensitivity (pneumonia recall): **0.9872**
+- Specificity (normal recall): **0.7735**
+- PPV: **0.8790** | NPV: **0.9731**
+- Missed pneumonia: **5** of 390 positive test cases (~**1.28%** of pneumonia cases)
 
 ---
 
@@ -41,8 +46,8 @@ This project investigates how **layer-wise fine-tuning depth** in a pretrained R
 |---|---|---|
 | Phase 1 | Data Acquisition & Wrangling | Dataset validation, integrity checks, class distribution |
 | Phase 2 | Exploratory Data Analysis | PCA embeddings, intensity analysis, resolution study |
-| Phase 3 | Model Development & Optimization | 4 model configurations, Grad-CAM, threshold tuning |
-| Phase 4 | Explainable AI & Deployment | LIME, fairness audit, Gradio interface, monitoring |
+| Phase 3 | Model Development & Optimization | Four models, metric comparison table, confusion matrices + ROC per model, validation vs test generalization check, Grad-CAM, threshold = 0.9 for ResNet evaluations |
+| Phase 4 | Explainable AI & Deployment | Grad-CAM, LIME, global probability/ROC plots, threshold-sensitivity curves, calibration (reliability diagram + ECE), clinical metrics (sensitivity/specificity/PPV/NPV), Gradio demo |
 
 ---
 
@@ -151,11 +156,13 @@ Device:         CUDA (Google Colab T4 GPU)
 
 ## Explainability (Phase 4)
 
-- **Grad-CAM** — Layer4 gradient-weighted activation maps; validates model attends to lung parenchyma (not artifacts)
-- **LIME** — 500-perturbation superpixel analysis; green regions support PNEUMONIA prediction
-- **Threshold sensitivity** — Sweep from 0.30–0.99 showing clinical rationale for threshold = 0.9
-- **Fairness audit** — Sensitivity, Specificity, PPV, NPV, ECE (0.3432), demographic limitations
-- **Gradio interface** — Real-time X-ray upload with prediction + risk level + Grad-CAM output
+- **Grad-CAM** — Layer4 gradient-weighted maps; sanity-check that high-attribution regions align with lung fields
+- **LIME** — Superpixel perturbations highlighting regions that push the prediction toward PNEUMONIA
+- **Global behavior** — Side-by-side predicted-probability histograms by true class and ROC curve (reports ROC-AUC **0.9634** for the full fine-tuned model)
+- **Threshold sensitivity** — Precision, recall, and F1 vs threshold (e.g. recall **0.9872** at **0.9**; best F1 near **0.93** at a slightly lower threshold)
+- **Calibration** — Reliability diagram, calibration gap shading, Expected Calibration Error **ECE = 0.3421**
+- **Clinical metrics panel** — Bar chart for sensitivity, specificity, PPV, NPV, and balanced accuracy; written fairness discussion (dataset has no demographics for subgroup testing)
+- **Gradio** — Upload an X-ray, view predicted class, risk band, and Grad-CAM overlay
 
 ---
 
@@ -179,7 +186,7 @@ Inference latency (T4 GPU):
 ## Limitations
 
 - Dataset limited to pediatric patients (ages 1–5) at a single institution — generalizability to adult or diverse populations unvalidated
-- ECE = 0.3432 indicates model overconfidence — temperature scaling recommended before probability-level reporting
+- ECE ≈ **0.34** indicates poor probability calibration — temperature scaling or similar post-hoc calibration is recommended before treating scores as literal risk
 - No demographic metadata available — formal subgroup fairness auditing not possible with current dataset
 
 ---

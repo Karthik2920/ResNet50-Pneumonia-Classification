@@ -47,7 +47,7 @@ Test-set metrics below match the comparison table in [`Phase_4_XAI_MD_RFS.ipynb`
 | Phase 1 | Data Acquisition & Wrangling | Dataset validation, integrity checks, class distribution |
 | Phase 2 | Exploratory Data Analysis | PCA embeddings, intensity analysis, resolution study |
 | Phase 3 | Model Development & Optimization | Four models, metric comparison table, confusion matrices + ROC per model, validation vs test generalization check, Grad-CAM, threshold = 0.9 for ResNet evaluations |
-| Phase 4 | Explainable AI & Deployment | Grad-CAM, LIME, global probability/ROC plots, threshold-sensitivity curves, calibration (reliability diagram + ECE), clinical metrics (sensitivity/specificity/PPV/NPV), Gradio demo |
+| Phase 4 | Explainable AI & Deployment | Grad-CAM, LIME, global ROC/probability plots, threshold sweep, calibration (ECE), clinical metrics, **Gradio** demo, report **`Phase4_XAI_MD_Final_RFS_Group5.docx`** |
 
 ---
 
@@ -114,11 +114,12 @@ Google Colab        CUDA (T4 GPU)       Kaggle API
 ## Repository Structure
 
 ```
-├── Phase_4_XAI_MD_RFS.ipynb      # Complete project notebook (Phases 1–4) — primary
-├── Phase_4_XAI_Deployment_RFS.ipynb  # Alternate Colab export (full pipeline; fewer cells)
-├── Phase4_v4.docx                # Phase 4 written report
-├── README.md                     # This file
-└── .gitignore                    # Excludes kaggle.json, checkpoints, etc.
+├── Phase_4_XAI_MD_RFS.ipynb              # Complete project notebook (Phases 1–4) — primary; Gradio UI here
+├── Phase_4_XAI_Deployment_RFS.ipynb      # Alternate Colab export (full pipeline; fewer cells)
+├── Phase4_XAI_MD_Final_RFS_Group5.docx   # Phase 4 final report (XAI, fairness, Gradio) — Group 5
+├── Phase4_v4.docx                        # Earlier Phase 4 draft (optional)
+├── README.md
+└── .gitignore
 ```
 
 ---
@@ -162,7 +163,21 @@ Device:         CUDA (Google Colab T4 GPU)
 - **Threshold sensitivity** — Precision, recall, and F1 vs threshold (e.g. recall **0.9872** at **0.9**; best F1 near **0.93** at a slightly lower threshold)
 - **Calibration** — Reliability diagram, calibration gap shading, Expected Calibration Error **ECE = 0.3421**
 - **Clinical metrics panel** — Bar chart for sensitivity, specificity, PPV, NPV, and balanced accuracy; written fairness discussion (dataset has no demographics for subgroup testing)
-- **Gradio** — Upload an X-ray, view predicted class, risk band, and Grad-CAM overlay
+- **Gradio** — Implemented in the notebook; see the next section and **`Phase4_XAI_MD_Final_RFS_Group5.docx`**.
+
+---
+
+## Gradio deployment (Phase 4)
+
+The notebook implements a **`gr.Blocks`** app (title *Pneumonia Detection — Group 5*) wired to the **full fine-tuned ResNet50** at threshold **0.9**:
+
+- **`gr.Image`** (PIL) for chest X-ray upload  
+- **`gr.Label`** for class probabilities / confidence  
+- **`gr.Textbox`** for **risk level** (same clinical bands as in the notebook)  
+- **`gr.Image`** for **Grad-CAM** overlay on the uploaded study  
+- **`demo.launch(share=True)`** — exposes a temporary public URL (typical for **Google Colab** demos; link lifetime follows [Gradio](https://www.gradio.app/) sharing rules — use **`gradio deploy`** or **Hugging Face Spaces** for durable hosting)
+
+Rationale, screenshots, and deployment notes are in the Phase 4 report: [**`Phase4_XAI_MD_Final_RFS_Group5.docx`**](Phase4_XAI_MD_Final_RFS_Group5.docx).
 
 ---
 

@@ -81,36 +81,39 @@ Google Colab        CUDA (T4 GPU)       Kaggle API
 ### Steps
 
 1. **Open notebook in Google Colab**  
-   Upload `Full_Project_Group5_Phases1to4.ipynb` to Google Colab  
+   Upload [`Phase_4_XAI_MD_RFS.ipynb`](Phase_4_XAI_MD_RFS.ipynb) to Google Colab (complete Phases 1–4).  
    *(Runtime → Change runtime type → T4 GPU recommended)*
 
 2. **Upload Kaggle credentials**  
    In the Colab sidebar (Files tab), upload your `kaggle.json`  
    ⚠️ **Never commit `kaggle.json` to GitHub**
 
-3. **Run the fixed install cell first**
+3. **Run the install cells at the start of the notebook** (order matters; the notebook pins or upgrades NumPy first to satisfy LIME / OpenCV / SHAP, then installs the rest):
    ```python
-   !pip install -q --upgrade numpy
+   !pip install -q "numpy>=2.0.0"
    !pip install -q kaggle torchcam
    !pip install -q "lime" --no-deps
-   !pip install -q scikit-image gradio
+   !pip install -q scikit-image
    ```
-   Then **Runtime → Restart session** before continuing.
+   If Colab warns about NumPy version conflicts, use **Runtime → Restart session** (the notebook may also include a hard-restart cell) before continuing.
 
-4. **Run all cells top to bottom**  
+4. **Gradio** is installed in the Phase 4 section (`!pip install -q gradio`) before the demo cell. You can install it earlier with `!pip install -q gradio` if you prefer one block up front.
+
+5. **Run all cells top to bottom**  
    Runtime → Run all (Ctrl+F9)
 
-5. **Expected runtime:** ~45–60 minutes on T4 GPU (includes all 4 phases, 3 model training runs, Grad-CAM, LIME, Gradio launch)
+6. **Expected runtime:** ~45–60 minutes on T4 GPU (includes all 4 phases, model training runs, Grad-CAM, LIME, Gradio launch)
 
 ---
 
 ## Repository Structure
 
 ```
-├── Full_Project_Group5_Phases1to4.ipynb   # Complete project notebook (Phases 1–4)
-├── Phase4_Final_Group5.docx               # Phase 4 written report (APA 7)
-├── README.md                              # This file
-└── .gitignore                             # Excludes kaggle.json, checkpoints, etc.
+├── Phase_4_XAI_MD_RFS.ipynb      # Complete project notebook (Phases 1–4) — primary
+├── Phase_4_XAI_Deployment_RFS.ipynb  # Alternate Colab export (full pipeline; fewer cells)
+├── Phase4_v4.docx                # Phase 4 written report
+├── README.md                     # This file
+└── .gitignore                    # Excludes kaggle.json, checkpoints, etc.
 ```
 
 ---

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pneumonia AI Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <div class="noise"></div>
+    <div class="scan-line"></div>
+
+    <header class="topnav glass reveal">
+      <div class="brand">Pneumonia<span>OS</span></div>
+      <nav>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#intelligence">Intelligence</a>
+        <a href="#controls">Controls</a>
+      </nav>
+      <button class="btn btn-sm magnetic">Live Session</button>
+    </header>
+
+    <main class="container" id="dashboard">
+      <section class="hero glass reveal">
+        <p class="eyebrow">Radiology Intelligence Platform</p>
+        <h1>World-Class Clinical AI Interface</h1>
+        <p class="subtitle">Cinematic UX + realtime dashboard + explainability workspace in one experience.</p>
+        <div class="hero-actions">
+          <button id="simulateBtnTop" class="btn magnetic">Run Inference</button>
+          <button class="btn btn-ghost magnetic">Export Report</button>
+        </div>
+      </section>
+
+      <section class="kpi-band reveal">
+        <article class="metric glass"><p>Sensitivity</p><h3>98.7%</h3></article>
+        <article class="metric glass"><p>Specificity</p><h3>77.3%</h3></article>
+        <article class="metric glass"><p>PPV</p><h3>87.9%</h3></article>
+        <article class="metric glass"><p>NPV</p><h3>97.3%</h3></article>
+      </section>
+
+      <section class="grid reveal">
+        <article class="card glass">
+          <h2>Upload X-ray</h2>
+          <label class="dropzone" id="dropzone">
+            <input id="fileInput" type="file" accept="image/png,image/jpeg,image/jpg" />
+            <span>Drop image here or click to upload</span>
+          </label>
+          <img id="previewImage" alt="X-ray preview" class="preview hidden" />
+        </article>
+
+        <article class="card glass">
+          <h2>AI Prediction Core</h2>
+          <div class="pulse-ring"></div>
+          <div class="prediction-main">
+            <p class="label">Result</p>
+            <p id="predictedClass" class="value">Waiting for upload</p>
+          </div>
+          <div class="progress-wrap">
+            <label>Pneumonia probability</label>
+            <div class="progress-track"><div id="pneumoniaBar" class="progress-fill"></div></div>
+            <p id="pneumoniaText">--%</p>
+          </div>
+          <div class="risk-row">
+            <span class="label">Risk Band</span>
+            <span id="riskBadge" class="badge">N/A</span>
+          </div>
+          <p id="riskGuidance" class="muted">Upload image to generate triage guidance.</p>
+        </article>
+      </section>
+
+      <section class="grid reveal" id="intelligence">
+        <article class="card glass">
+          <h2>Explainability Panel</h2>
+          <p class="muted">Grad-CAM / LIME visualization target surface.</p>
+          <div class="placeholder">Heatmap + Superpixel Render Area</div>
+        </article>
+        <article class="card glass">
+          <h2>Confidence Radar</h2>
+          <div class="radar-wrap">
+            <div id="radarNeedle" class="radar-needle"></div>
+            <div class="radar-center"></div>
+          </div>
+          <ul id="activityFeed" class="feed">
+            <li><span class="dot"></span> System online. Awaiting first upload.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="grid reveal" id="controls">
+        <article class="card glass">
+          <h2>Inference Controls</h2>
+          <label for="threshold">Decision Threshold</label>
+          <input id="threshold" type="range" min="0.5" max="0.99" step="0.01" value="0.9" />
+          <p class="muted">Current threshold: <span id="thresholdValue">0.90</span></p>
+          <button id="simulateBtn" class="btn magnetic">Run Inference</button>
+        </article>
+        <article class="card glass">
+          <h2>System Status</h2>
+          <div class="status-row"><span>API</span><strong class="ok">CONNECTED</strong></div>
+          <div class="status-row"><span>Model</span><strong class="ok">READY</strong></div>
+          <div class="status-row"><span>XAI Engine</span><strong class="warn">SIMULATION</strong></div>
+          <div class="status-row"><span>Session</span><strong id="sessionClock">00:00:00</strong></div>
+        </article>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
